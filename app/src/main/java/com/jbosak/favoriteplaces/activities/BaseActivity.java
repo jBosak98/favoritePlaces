@@ -1,17 +1,15 @@
-package com.jbosak.favoriteplaces;
+package com.jbosak.favoriteplaces.activities;
 
 import android.animation.Animator;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
-import static com.jbosak.favoriteplaces.R.id.drawer_layout;
+import com.jbosak.favoriteplaces.views.NavDrawer;
+import com.jbosak.favoriteplaces.R;
 
 
 public class BaseActivity extends AppCompatActivity {

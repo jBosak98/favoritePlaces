@@ -1,4 +1,4 @@
-package com.jbosak.favoriteplaces;
+package com.jbosak.favoriteplaces.views;
 
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
@@ -9,6 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.jbosak.favoriteplaces.R;
+import com.jbosak.favoriteplaces.activities.BaseActivity;
+import com.jbosak.favoriteplaces.activities.NoteActivity;
 
 import java.util.ArrayList;
 

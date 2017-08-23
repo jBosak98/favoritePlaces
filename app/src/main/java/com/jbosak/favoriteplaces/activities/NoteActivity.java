@@ -1,4 +1,4 @@
-package com.jbosak.favoriteplaces;
+package com.jbosak.favoriteplaces.activities;
 
 import android.support.v7.app.AppCompatActivity;
 
