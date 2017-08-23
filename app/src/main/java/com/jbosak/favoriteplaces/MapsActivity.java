@@ -1,6 +1,5 @@
 package com.jbosak.favoriteplaces;
 
-import android.*;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -14,43 +13,45 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 
-public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
+public class MapsActivity extends BaseActivity implements MapFragment.OnCreateFavoriteListener {
 
     private static final int PERMISSION_ALL = 101;
     private Context context;
     private String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION};// List of permissions required
     private MapFragment mapFragment;
     private FragmentManager fragmentManager;
+    MapFragment.MainNavDrawerMap drawerMap;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_maps);
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if(toolbar != null){
             setSupportActionBar(toolbar);
         }
         super.onCreate(savedInstanceState);
-        setNavDrawer(new MainNavDrawer(this));
         context = getApplicationContext();
 
 
         getSupportActionBar().setTitle("<-Favorites");
 
 
-         mapFragment = new MapFragment();
-         fragmentManager = getSupportFragmentManager();
+        mapFragment = new MapFragment();
+        drawerMap = new MapFragment.MainNavDrawerMap(this);
 
+        fragmentManager = getSupportFragmentManager();
+
+        setNavDrawer(drawerMap);
         askPermission();
 
     }
 
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
 
-    }
     public void askPermission() {
         for (String permission : PERMISSIONS) {
             if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -62,7 +63,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
             }
         }
         fragmentManager.beginTransaction().replace(R.id.frame_layout,mapFragment).commit();
-
 
 
     }
@@ -81,5 +81,15 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback {
                 return;
             }
         }
+    }
+
+
+    @Override
+    public void onCreateFavorite(NavDrawer.ActivityNavDrawerItem item) {
+        drawerMap.deleteItems();
+
+        drawerMap.addItem(item);
+
+        simplySetNavDrawer(drawerMap);
     }
 }

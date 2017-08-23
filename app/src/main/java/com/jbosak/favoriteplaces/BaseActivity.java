@@ -24,6 +24,10 @@ public class BaseActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
     }
+    protected void simplySetNavDrawer(NavDrawer drawer){
+        this.navDrawer = drawer;
+        this.navDrawer.create();
+    }
 
     protected void setNavDrawer(NavDrawer drawer){
         this.navDrawer = drawer;

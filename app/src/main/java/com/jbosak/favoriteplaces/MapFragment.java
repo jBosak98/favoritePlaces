@@ -1,8 +1,8 @@
 package com.jbosak.favoriteplaces;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -22,7 +22,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -31,40 +30,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final int PERMISSION_REQUEST_CODE = 1;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-    private MapView mapView;
-    private View mView;
-    private Context context;
+    private OnCreateFavoriteListener mCallback;
+
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.e("onCreate", "");
-
         super.onCreate(savedInstanceState);
-
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-
-        /*if(hasPermission()){
-
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if(location != null){
-                                Log.e(location.toString(),location.getProvider().toString());
-                                Log.e(Double.toString(location.getLatitude()), String.valueOf(location.getLongitude()));
-                            }
-                            else{
-                                Log.e("WHAT", "AA");
-                            }
-
-                        }
-                    });
-        } else{
-            checkPermission();
-        }*/
     }
 
     public MapFragment() {
@@ -82,33 +57,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
 
-        return view; //super.onCreateView(inflater, container, savedInstanceState);
+        return view;
     }
 
 
-    private boolean hasPermission() {
-        int result = ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION);
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity activity = null;
 
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            android.support.v4.app.ActivityCompat.requestPermissions(
-                    getActivity(),
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSION_REQUEST_CODE);
-            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                return true;
+        try {
+            if(context instanceof Activity){
+                activity = (Activity) context;
             }
-        }
-        return false;
-    }
+            mCallback = (OnCreateFavoriteListener) activity;
 
-    private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
+
+        } catch (ClassCastException e){
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnCreateFavoriteListener");
         }
     }
 
@@ -116,11 +83,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        //checkPermission();
         if (ActivityCompat.checkSelfPermission(getActivity(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
@@ -131,17 +95,34 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             return;
         }
         mMap.setMyLocationEnabled(true);
-        mMap.
+
 
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
+
                 mMap.addMarker(new MarkerOptions().position(latLng).title("Favorite1"));
+                mCallback.onCreateFavorite(
+                        new NavDrawer.ActivityNavDrawerItem(
+                                "Favourite1",R.id.include_main_nav_drawer_topItems));
+
             }
 
         });
     }
+    public static class MainNavDrawerMap extends NavDrawer {
+
+
+        public MainNavDrawerMap(BaseActivity activity) {
+            super(activity);
+        }
+    }
+
+    public interface OnCreateFavoriteListener {
+        public void onCreateFavorite(NavDrawer.ActivityNavDrawerItem item);
+    }
+
 
 
 }

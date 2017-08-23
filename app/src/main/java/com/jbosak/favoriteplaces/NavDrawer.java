@@ -57,6 +57,10 @@ public class NavDrawer {
         items.add(item);
         item.navDrawer = this;
     }
+    public void deleteItems(){
+        items.removeAll(items);
+
+    }
     public boolean isOpen(){
         return drawerLayout.isDrawerOpen(Gravity.START);
     }
