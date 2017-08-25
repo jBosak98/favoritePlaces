@@ -1,6 +1,9 @@
 package com.jbosak.favoriteplaces.views;
 
 import android.content.Intent;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -10,16 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.jbosak.favoriteplaces.R;
 import com.jbosak.favoriteplaces.activities.BaseActivity;
+import com.jbosak.favoriteplaces.activities.MapsActivity;
 import com.jbosak.favoriteplaces.activities.NoteActivity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
 
 public class NavDrawer {
-    private ArrayList<NavDrawerItem> items;
+    public static ArrayList<NavDrawerItem> items = new ArrayList<NavDrawerItem>();
+
     private NavDrawerItem selectedItem;
 
     protected BaseActivity activity;
@@ -27,19 +34,11 @@ public class NavDrawer {
     protected DrawerLayout drawerLayout;
 
     public NavDrawer(BaseActivity activity){
+
         this.activity = activity;
-        items = new ArrayList<>();
-       // drawerLayout =
-       // drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
         navDrawerView = (ViewGroup) activity.findViewById(R.id.nav_drawer);
         drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
 
-
-        //if(drawerLayout == null || navDrawerView == null) {
-       //     throw new RuntimeException(("To use this class, " +
-      //              "you must have views with the ids of drawer_layout and nav_drawer"));
-
-        //  }
 
         Toolbar toolbar = activity.getToolbar();
 
@@ -49,7 +48,6 @@ public class NavDrawer {
                 @Override
                 public void onClick(View view){
                     if(drawerLayout != null){
-                        Log.e("NULL!","FEE");
                     }
                     setOpen(!isOpen());
                 }
@@ -85,44 +83,110 @@ public class NavDrawer {
     }
     public void create(){
         LayoutInflater inflater = activity.getLayoutInflater();
+
         for(NavDrawerItem item : items){
             item.inflate(inflater, navDrawerView);
         }
 
+
+    }
+
+    public void addOnce() {
+        LayoutInflater inflater = activity.getLayoutInflater();
+
+            items.get(items.size()-1).inflate(inflater, navDrawerView);
+
     }
 
 
-    public static abstract class NavDrawerItem{
+    public static abstract class NavDrawerItem implements Parcelable {
         protected NavDrawer navDrawer;
 
         public abstract void inflate(LayoutInflater inflater, ViewGroup container);
         public abstract void setSelected(boolean isSelected);
+
+
+
     }
     public static class BasicNavDrawerItem extends NavDrawerItem implements View.OnClickListener {
-        private String text;
-        private int containerId;
+        private String name;
         private View view;
         private TextView textView;
+        private String note;
+        private double latitude;
+        public double longitude;
 
-        public BasicNavDrawerItem(String text, int containerId) {
-            this.text = text;
-            this.containerId = containerId;
+        private Class targetActivity;
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+
+        public Class getTargetActivity() {
+            return targetActivity;
         }
 
         @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(getName());
+            dest.writeDouble(latitude);
+            dest.writeDouble(longitude);
+            dest.writeString(getNote());
+
+
+        }
+
+        public BasicNavDrawerItem(Parcel in){
+            this.name = in.readString();
+            this.note = in.readString();
+            this.latitude = in.readDouble();
+            this.longitude = in.readDouble();
+
+
+
+        }
+        public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+            public BasicNavDrawerItem createFromParcel(Parcel in) {
+                return new BasicNavDrawerItem(in);
+            }
+
+            public BasicNavDrawerItem[] newArray(int size) {
+                return new BasicNavDrawerItem[size];
+            }
+        };
+
+
+
+
+        public BasicNavDrawerItem(String name, Double latitude, Double longitude,@Nullable String note, Class targetActivity) {
+            this.name = name;
+            this.note = note;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.targetActivity = targetActivity;
+
+        }
+
+
+        @Override
         public void inflate(LayoutInflater inflater, ViewGroup navDrawerView){
-            ViewGroup container = (ViewGroup) navDrawerView.findViewById(containerId);
+
+            ViewGroup container = (ViewGroup) navDrawerView.findViewById(R.id.include_main_nav_drawer_topItems);
             if(container == null){
-                throw new RuntimeException("Nav drawer item" + text +
+                throw new RuntimeException("Nav drawer item" + name +
                         "could not be attached to ViewGroup, View not found.");
             }
+
             view = inflater.inflate(R.layout.list_item_nav_drawer, container,false);
             container.addView(view);
+
 
             view.setOnClickListener(this);
 
             textView = (TextView) view.findViewById(R.id.list_item_nav_drawer_text);
-            textView.setText(text);
+            textView.setText(name);
         }
 
         @Override
@@ -131,8 +195,10 @@ public class NavDrawer {
         }
 
 
-        public void setText(String text){
-            this.text = text;
+
+
+        public void setName(String text){
+            this.name = text;
             if(view != null){
                 textView.setText(text);
             }
@@ -143,41 +209,67 @@ public class NavDrawer {
             navDrawer.setSelectedItem(this);
 
         }
+        public void setNote(String note) {
+            this.note = note;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getNote() {
+
+            return note;
+        }
 
     }
 
-    public static class ActivityNavDrawerItem extends BasicNavDrawerItem{
-        private final Class targetActivity;
+    public static class ActivityNavDrawerItem extends BasicNavDrawerItem implements Serializable{
+        private Class target;
 
-        public ActivityNavDrawerItem( String text, int containerId) {
-            super(text, containerId);
-            targetActivity = NoteActivity.class;
 
+        //public ActivityNavDrawerItem(String name, LatLng latLng,) {
+     //       super(name, latLng.latitude,latLng.longitude, note);
+      //      targetActivity = NoteActivity.class;
+
+       // }
+
+        public ActivityNavDrawerItem(String name,LatLng latLng, @Nullable String note, Class targetActivity){
+            super(name,latLng.latitude,latLng.longitude,note,targetActivity);
+            target = targetActivity;
         }
         @Override
         public void inflate(LayoutInflater inflater, ViewGroup navDrawer){
             super.inflate(inflater,navDrawer);
 
-            if(this.navDrawer.activity.getClass() == targetActivity){
+            if(this.navDrawer.activity.getClass() == target){
                 this.navDrawer.setSelectedItem(this);
             }
+
         }
 
 
 
         @Override
-        public void onClick(View view){
+        public void onClick(final View view){
             navDrawer.setOpen(false);
-            if(navDrawer.activity.getClass() == targetActivity){
+            if(navDrawer.activity.getClass() == target){
                 return;
             }
+            view.setTag(super.getName());
             super.onClick(view);
 
 
             navDrawer.activity.fadeOut(new BaseActivity.FadeOutListener() {
                 @Override
                 public void onFadeOutEnd() {
-                    navDrawer.activity.startActivity(new Intent(navDrawer.activity,targetActivity));
+
+                    Intent intent = new Intent(navDrawer.activity,ActivityNavDrawerItem.super.targetActivity);
+                    intent.putExtra("NAME", ActivityNavDrawerItem.super.targetActivity.toString());
+
+
+
+                    navDrawer.activity.startActivity(intent);
                     navDrawer.activity.finish();
 
                 }

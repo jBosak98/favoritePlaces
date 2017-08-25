@@ -1,10 +1,31 @@
 package com.jbosak.favoriteplaces.activities;
 
-import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 
-/**
- * Created by root on 8/22/17.
- */
+import com.jbosak.favoriteplaces.R;
+import com.jbosak.favoriteplaces.views.MainNavDrawerMap;
 
-public class NoteActivity extends AppCompatActivity {
+
+public class NoteActivity extends BaseActivity/* implements MapFragment.OnCreateFavoriteListener*/ {
+    MainNavDrawerMap drawerMap;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+        setContentView(R.layout.activity_note);
+        if(toolbar != null){
+            setSupportActionBar(toolbar);
+        }
+        getSupportActionBar().setTitle("<-FavorXXXXites");
+
+
+
+         drawerMap = new MainNavDrawerMap(this);
+
+        setNavDrawer(new MainNavDrawerMap(this));
+
+        super.onCreate(savedInstanceState);
+    }
+
+
 }

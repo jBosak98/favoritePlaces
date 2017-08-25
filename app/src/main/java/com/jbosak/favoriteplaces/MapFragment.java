@@ -21,7 +21,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jbosak.favoriteplaces.activities.BaseActivity;
+import com.jbosak.favoriteplaces.activities.NoteActivity;
 import com.jbosak.favoriteplaces.views.NavDrawer;
+
+import java.util.ArrayList;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -103,21 +106,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             public void onMapLongClick(LatLng latLng) {
 
                 mMap.addMarker(new MarkerOptions().position(latLng).title("Favorite1"));
+
                 mCallback.onCreateFavorite(
-                        new NavDrawer.ActivityNavDrawerItem(
-                                "Favourite1",R.id.include_main_nav_drawer_topItems));
+                        new NavDrawer.ActivityNavDrawerItem("Favourite1", latLng, null, NoteActivity.class));
+
 
             }
 
         });
     }
-    public static class MainNavDrawerMap extends NavDrawer {
 
-
-        public MainNavDrawerMap(BaseActivity activity) {
-            super(activity);
-        }
-    }
 
     public interface OnCreateFavoriteListener {
         public void onCreateFavorite(NavDrawer.ActivityNavDrawerItem item);

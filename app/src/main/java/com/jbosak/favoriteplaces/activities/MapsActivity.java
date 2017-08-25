@@ -3,32 +3,40 @@ package com.jbosak.favoriteplaces.activities;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.jbosak.favoriteplaces.MapFragment;
+import com.jbosak.favoriteplaces.views.MainNavDrawerMap;
 import com.jbosak.favoriteplaces.views.NavDrawer;
 import com.jbosak.favoriteplaces.R;
 
+import java.util.ArrayList;
+
+import static android.R.id.list;
+
 public class MapsActivity extends BaseActivity implements MapFragment.OnCreateFavoriteListener {
 
-    private static final int PERMISSION_ALL = 101;
     private Context context;
-    private String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION};// List of permissions required
+
     private MapFragment mapFragment;
     private FragmentManager fragmentManager;
-    MapFragment.MainNavDrawerMap drawerMap;
-
+    MainNavDrawerMap drawerMap;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_maps);
 
-        if(toolbar != null){
+        if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
         super.onCreate(savedInstanceState);
@@ -39,55 +47,45 @@ public class MapsActivity extends BaseActivity implements MapFragment.OnCreateFa
 
 
         mapFragment = new MapFragment();
-        drawerMap = new MapFragment.MainNavDrawerMap(this);
+        drawerMap = new MainNavDrawerMap(this);
+        LocationManager locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location location = locationManager.getLastKnownLocation(locationManager
+                .getBestProvider(criteria, false));
+
+
+      //  drawerMap.addItem(new NavDrawer.ActivityNavDrawerItem("Map",new LatLng(location.getLatitude(),location.getLongitude()),null,MapsActivity.class));
+
+        drawerMap.addItem(mapItem);
+        setNavDrawer(drawerMap);
 
         fragmentManager = getSupportFragmentManager();
 
-        setNavDrawer(drawerMap);
-        askPermission();
-
-    }
-
-
-
-    public void askPermission() {
-        for (String permission : PERMISSIONS) {
-            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(PERMISSIONS, PERMISSION_ALL);
-                    return;
-                }
-            }
-        }
         fragmentManager.beginTransaction().replace(R.id.frame_layout,mapFragment).commit();
 
-
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
 
-        switch (requestCode) {
-            case PERMISSION_ALL: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    fragmentManager.beginTransaction().replace(R.id.frame_layout,mapFragment).commit();
 
-                } else {
-                    Toast.makeText(this, "Until you grant the permission, we cannot proceed further", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-        }
-    }
+
+
 
 
     @Override
     public void onCreateFavorite(NavDrawer.ActivityNavDrawerItem item) {
-        drawerMap.deleteItems();
+
+        //drawerMap.deleteItems();
+
+
 
         drawerMap.addItem(item);
 
         simplySetNavDrawer(drawerMap);
     }
+
+
 }
