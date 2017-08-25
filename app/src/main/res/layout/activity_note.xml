@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout">
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <android.support.v7.widget.Toolbar
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -15,7 +16,42 @@
         android:background="@color/colorPrimary"
         android:id="@+id/include_toolbar">
     </android.support.v7.widget.Toolbar>
-    </FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:orientation="vertical"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingStart="5dp"
+            >
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_note_name"
+                android:maxLines="1"
+                android:maxLength="32"
+                android:hint="name"
+                style="?android:attr/textAppearanceLarge"
+                android:textColor="#000000"/>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_note_note"
+                android:hint="note"
+                style="?android:attr/textAppearanceMedium"
+                android:textColor="#222222"
+                android:background="@android:color/transparent"
+                />
+            </ScrollView>
+        </LinearLayout>
+
+    </LinearLayout>
 
     <include layout="@layout/include_main_nav_drawer"/>
 

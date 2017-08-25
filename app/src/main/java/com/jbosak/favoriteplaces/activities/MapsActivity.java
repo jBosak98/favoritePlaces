@@ -57,27 +57,9 @@ public class MapsActivity extends BaseActivity implements MapFragment.OnCreateFa
 
         super.createMapItem();
         if(drawerMap.size() == 0){
-
-            Log.e(String.valueOf(drawerMap.size()),"XDD");
             drawerMap.addItem(mapItem);
         }
         setNavDrawer(drawerMap);
-
-
-        LocationManager locationManager = (LocationManager)
-                getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        Location location = locationManager.getLastKnownLocation(locationManager
-                .getBestProvider(criteria, false));
-
-
-      //  drawerMap.addItem(new NavDrawer.ActivityNavDrawerItem("Map",new LatLng(location.getLatitude(),location.getLongitude()),null,MapsActivity.class));
-
-
 
         fragmentManager = getSupportFragmentManager();
 
@@ -92,9 +74,6 @@ public class MapsActivity extends BaseActivity implements MapFragment.OnCreateFa
 
     @Override
     public void onCreateFavorite(NavDrawer.ActivityNavDrawerItem item) {
-
-        //drawerMap.deleteItems();
-
 
 
         drawerMap.addItem(item);

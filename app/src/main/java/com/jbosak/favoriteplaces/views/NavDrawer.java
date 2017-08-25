@@ -2,6 +2,7 @@ package com.jbosak.favoriteplaces.views;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -37,7 +38,6 @@ public class NavDrawer {
     public NavDrawer(BaseActivity activity){
 
         this.activity = activity;
-        Log.e(activity.toString(),"CLASS");
         navDrawerView = (ViewGroup) activity.findViewById(R.id.nav_drawer);
         drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
 
@@ -117,13 +117,14 @@ public class NavDrawer {
 
 
     }
-    public static class BasicNavDrawerItem extends NavDrawerItem implements View.OnClickListener {
+    public static class BasicNavDrawerItem extends NavDrawerItem implements View.OnClickListener, Parcelable {
         private String name;
         private View view;
         private TextView textView;
         private String note;
         private double latitude;
         public double longitude;
+        private Bundle bundle;
 
         private Class targetActivity;
 
@@ -204,8 +205,6 @@ public class NavDrawer {
         }
 
 
-
-
         public void setName(String text){
             this.name = text;
             if(view != null){
@@ -215,6 +214,8 @@ public class NavDrawer {
         }
         @Override
         public void onClick(View view) {
+            bundle = new Bundle();
+            bundle.putParcelable(NoteActivity.FAVORITE_PLACE, this);
             navDrawer.setSelectedItem(this);
 
         }
@@ -234,25 +235,18 @@ public class NavDrawer {
     }
 
     public static class ActivityNavDrawerItem extends BasicNavDrawerItem implements Serializable{
-        private Class target;
 
 
-        //public ActivityNavDrawerItem(String name, LatLng latLng,) {
-     //       super(name, latLng.latitude,latLng.longitude, note);
-      //      targetActivity = NoteActivity.class;
-
-       // }
 
         public ActivityNavDrawerItem(String name,LatLng latLng, @Nullable String note, Class targetActivity){
             super(name,latLng.latitude,latLng.longitude,note,targetActivity);
-            target = targetActivity;
 
         }
         @Override
         public void inflate(LayoutInflater inflater, ViewGroup navDrawer){
             super.inflate(inflater,navDrawer);
 
-            if(this.navDrawer.activity.getClass() == target){
+            if(this.navDrawer.activity.getClass() == getTargetActivity()){
                 this.navDrawer.setSelectedItem(this);
             }
 
@@ -262,28 +256,19 @@ public class NavDrawer {
 
         @Override
         public void onClick(final View view){
-            //Log.e(activity.toString(),"HERE");
             navDrawer.setOpen(false);
-            Log.e("TARGET",target.toString());
-            Log.e("TARGET2",ActivityNavDrawerItem.super.targetActivity.toString());
-
-            Log.e("THIS:",navDrawer.activity.getClass().toString());
-            if(navDrawer.activity.getClass() == target){
+            if(navDrawer.activity.getClass() == getTargetActivity() && getTargetActivity() == MapsActivity.class){
                 return;
             }
             view.setTag(super.getName());
             super.onClick(view);
-
-
 
             navDrawer.activity.fadeOut(new BaseActivity.FadeOutListener() {
                 @Override
                 public void onFadeOutEnd() {
 
                     Intent intent = new Intent(navDrawer.activity.getApplicationContext(),ActivityNavDrawerItem.super.targetActivity);
-                    intent.putExtra("NAME", ActivityNavDrawerItem.super.targetActivity.toString());
-
-
+                    intent.putExtras(ActivityNavDrawerItem.super.bundle);
 
                     navDrawer.activity.startActivity(intent);
                     navDrawer.activity.finish();

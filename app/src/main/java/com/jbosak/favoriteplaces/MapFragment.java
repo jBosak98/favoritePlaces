@@ -108,7 +108,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 mMap.addMarker(new MarkerOptions().position(latLng).title("Favorite1"));
 
                 mCallback.onCreateFavorite(
-                        new NavDrawer.ActivityNavDrawerItem("Favourite1", latLng, null, NoteActivity.class));
+                        new NavDrawer.ActivityNavDrawerItem("new Place", latLng, null, NoteActivity.class));
 
 
             }

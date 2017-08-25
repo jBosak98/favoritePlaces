@@ -32,7 +32,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:theme="@style/AppThemeWithoutActionBar"
+            android:theme="@style/AppTheme"
             android:name=".activities.MapsActivity"
             android:label="@string/title_activity_maps">
             <intent-filter>
@@ -41,7 +41,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.NoteActivity"></activity>
+        <activity android:name=".activities.NoteActivity">
+
+        </activity>
 
     </application>
 

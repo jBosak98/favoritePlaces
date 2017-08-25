@@ -29,9 +29,9 @@ public class BaseActivity extends AppCompatActivity {
     protected NavDrawer navDrawer;
     protected Toolbar toolbar;
     protected NavDrawer.ActivityNavDrawerItem mapItem;
-    private String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};// List of permissions required
+    private String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION};// List of permissions required
     private static final int PERMISSION_ALL = 101;
-
 
 
     @Override
@@ -50,13 +50,17 @@ public class BaseActivity extends AppCompatActivity {
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
 
             return;
         }
         Location location = locationManager.getLastKnownLocation(locationManager
                 .getBestProvider(criteria, false));
-        mapItem = new NavDrawer.ActivityNavDrawerItem("Map",new LatLng(30,30),null,MapsActivity.class);
+        mapItem = new NavDrawer.ActivityNavDrawerItem(
+                "Map",new LatLng(30,30),null,MapsActivity.class);
 
     }
 
@@ -104,6 +108,9 @@ public class BaseActivity extends AppCompatActivity {
     public void  setContentView(@LayoutRes int layoutResId){
         super.setContentView(layoutResId);
         toolbar = (Toolbar) findViewById(R.id.include_toolbar);
+        if(toolbar != null){
+            setSupportActionBar(toolbar);
+        }
 
 
 
