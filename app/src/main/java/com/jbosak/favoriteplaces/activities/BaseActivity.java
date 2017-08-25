@@ -38,21 +38,26 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+    }
+    protected void simplySetNavDrawer(NavDrawer drawer){
+        this.navDrawer = drawer;
+        this.navDrawer.addOnce();
+    }
+    protected void createMapItem(){
         askPermission();
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             return;
         }
         Location location = locationManager.getLastKnownLocation(locationManager
                 .getBestProvider(criteria, false));
-        mapItem = new NavDrawer.ActivityNavDrawerItem("Map",new LatLng(location.getLatitude(),location.getLongitude()),null,MapsActivity.class);
-    }
-    protected void simplySetNavDrawer(NavDrawer drawer){
-        this.navDrawer = drawer;
-        this.navDrawer.addOnce();
+        mapItem = new NavDrawer.ActivityNavDrawerItem("Map",new LatLng(30,30),null,MapsActivity.class);
+
     }
 
     public void askPermission() {

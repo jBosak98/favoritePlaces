@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -33,21 +34,36 @@ public class MapsActivity extends BaseActivity implements MapFragment.OnCreateFa
 
 
     @Override
+    public void setContentView(@LayoutRes int layoutResId) {
+        super.setContentView(layoutResId);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setTitle("<-Favorites");
+
+        }
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_maps);
 
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
+
+        drawerMap = new MainNavDrawerMap(this);
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
 
-
-        getSupportActionBar().setTitle("<-Favorites");
-
-
         mapFragment = new MapFragment();
-        drawerMap = new MainNavDrawerMap(this);
+
+        super.createMapItem();
+        if(drawerMap.size() == 0){
+
+            Log.e(String.valueOf(drawerMap.size()),"XDD");
+            drawerMap.addItem(mapItem);
+        }
+        setNavDrawer(drawerMap);
+
+
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -61,8 +77,7 @@ public class MapsActivity extends BaseActivity implements MapFragment.OnCreateFa
 
       //  drawerMap.addItem(new NavDrawer.ActivityNavDrawerItem("Map",new LatLng(location.getLatitude(),location.getLongitude()),null,MapsActivity.class));
 
-        drawerMap.addItem(mapItem);
-        setNavDrawer(drawerMap);
+
 
         fragmentManager = getSupportFragmentManager();
 

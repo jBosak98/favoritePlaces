@@ -24,4 +24,6 @@ public class MainNavDrawerMap extends NavDrawer implements MapFragment.OnCreateF
 
         this.addItem(item);
     }
+
+
 }

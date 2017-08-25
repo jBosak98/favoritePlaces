@@ -1,5 +1,6 @@
 package com.jbosak.favoriteplaces.views;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -29,13 +30,14 @@ public class NavDrawer {
 
     private NavDrawerItem selectedItem;
 
-    protected BaseActivity activity;
+    public static BaseActivity activity;
     protected ViewGroup navDrawerView;
     protected DrawerLayout drawerLayout;
 
     public NavDrawer(BaseActivity activity){
 
         this.activity = activity;
+        Log.e(activity.toString(),"CLASS");
         navDrawerView = (ViewGroup) activity.findViewById(R.id.nav_drawer);
         drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
 
@@ -62,6 +64,9 @@ public class NavDrawer {
     public void deleteItems(){
         items.removeAll(items);
 
+    }
+    public int size(){
+        return items.size();
     }
     public boolean isOpen(){
         return drawerLayout.isDrawerOpen(Gravity.START);
@@ -96,6 +101,10 @@ public class NavDrawer {
 
             items.get(items.size()-1).inflate(inflater, navDrawerView);
 
+    }
+
+    public void refreshActivity(BaseActivity activity) {
+        this.activity = activity;
     }
 
 
@@ -237,6 +246,7 @@ public class NavDrawer {
         public ActivityNavDrawerItem(String name,LatLng latLng, @Nullable String note, Class targetActivity){
             super(name,latLng.latitude,latLng.longitude,note,targetActivity);
             target = targetActivity;
+
         }
         @Override
         public void inflate(LayoutInflater inflater, ViewGroup navDrawer){
@@ -252,7 +262,12 @@ public class NavDrawer {
 
         @Override
         public void onClick(final View view){
+            //Log.e(activity.toString(),"HERE");
             navDrawer.setOpen(false);
+            Log.e("TARGET",target.toString());
+            Log.e("TARGET2",ActivityNavDrawerItem.super.targetActivity.toString());
+
+            Log.e("THIS:",navDrawer.activity.getClass().toString());
             if(navDrawer.activity.getClass() == target){
                 return;
             }
@@ -260,11 +275,12 @@ public class NavDrawer {
             super.onClick(view);
 
 
+
             navDrawer.activity.fadeOut(new BaseActivity.FadeOutListener() {
                 @Override
                 public void onFadeOutEnd() {
 
-                    Intent intent = new Intent(navDrawer.activity,ActivityNavDrawerItem.super.targetActivity);
+                    Intent intent = new Intent(navDrawer.activity.getApplicationContext(),ActivityNavDrawerItem.super.targetActivity);
                     intent.putExtra("NAME", ActivityNavDrawerItem.super.targetActivity.toString());
 
 
