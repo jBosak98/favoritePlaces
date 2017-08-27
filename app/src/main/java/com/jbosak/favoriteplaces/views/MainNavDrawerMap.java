@@ -31,7 +31,7 @@ public class MainNavDrawerMap extends NavDrawer {
         if (items.size() != 0)
             writeJSONArrayToFile(createJSONArray());
 
-        JSONArray array = readData();
+        JSONArray array = readFromFile();
         if (array != null) {
             if (array.length() != 0) {
                 JSONObject fav;
@@ -65,7 +65,7 @@ public class MainNavDrawerMap extends NavDrawer {
     }
 
 
-    private JSONArray readData() {
+    private JSONArray readFromFile() {
         String ret = "";
 
         try {
