@@ -131,6 +131,10 @@ public class NavDrawer {
             return latitude;
         }
 
+        public void setLongitude(double longitude) {
+            this.longitude = longitude;
+        }
+
         public double getLongitude() {
             return longitude;
         }

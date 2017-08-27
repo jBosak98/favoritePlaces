@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/activity_note_delete"
+        android:title="delete"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_delete"/>
+    <item
         android:id="@+id/activity_note_map_view"
         android:title="see at map"
         app:showAsAction="always"

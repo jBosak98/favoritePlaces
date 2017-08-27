@@ -93,13 +93,18 @@ public class NoteActivity extends BaseActivity {
         if (itemId == R.id.activity_note_menuEdit) {
             changeState(STATE_EDITING);
             return true;
-        } else if (itemId == R.id.activity_note_map_view) {
+        }if (itemId == R.id.activity_note_map_view) {
             Intent intent = new Intent(this, MapsActivity.class);
             intent.putExtra(NoteActivity.PLACE_LATITUDE, favItem.getLatitude());
             intent.putExtra(NoteActivity.PLACE_LONGITUDE, favItem.getLongitude());
             intent.putExtra(NoteActivity.PLACE_NAME, favItem.getName());
             startActivity(intent);
             finish();
+            return true;
+        } if(itemId == R.id.activity_note_delete){
+            favItem.setLongitude(Double.NaN);
+            writeJSONArrayToFile(createJSONArray());
+            startActivity(new Intent(this,MapsActivity.class));
         }
         return false;
     }
@@ -145,8 +150,9 @@ public class NoteActivity extends BaseActivity {
                 jo.put(PLACE_LATITUDE, navDrawer.getItems().get(i).getLatitude());
                 jo.put(PLACE_LONGITUDE, navDrawer.getItems().get(i).getLongitude());
 
-                ja.put(jo);
-
+                if(!(navDrawer.getItems().get(i).getLatitude() == favItem.getLatitude() && favItem.getLongitude() == Double.NaN)) {
+                    ja.put(jo);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
