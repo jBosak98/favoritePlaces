@@ -4,7 +4,7 @@
     <item
         android:id="@+id/activity_note_edit_menuDone"
         android:title="Save"
-        android:icon="@drawable/quantum_ic_stop_grey600_36"
+        android:icon="@android:drawable/ic_menu_send"
         app:showAsAction="always"/>
 
 </menu>

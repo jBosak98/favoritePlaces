@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,16 +31,14 @@ import java.util.ArrayList;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 
-    private static final int PERMISSION_REQUEST_CODE = 1;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     private OnCreateFavoriteListener mCallback;
-
+    private LatLng placeLatLng;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.e("onCreate", "");
         super.onCreate(savedInstanceState);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -51,7 +50,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        Log.e("onCreateView", "");
         View view = inflater.inflate(R.layout.fragment_maps, container, false);
         if (mMap == null) {
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -63,20 +61,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         Activity activity = null;
-
         try {
-            if(context instanceof Activity){
+            if (context instanceof Activity) {
                 activity = (Activity) context;
+            }
+            if (activity.getIntent().hasExtra(NoteActivity.PLACE_LATITUDE)) {
+
+
+                placeLatLng = new LatLng(
+                        activity.getIntent().getDoubleExtra(NoteActivity.PLACE_LATITUDE, -34),
+                        activity.getIntent().getDoubleExtra(NoteActivity.PLACE_LONGITUDE, 151));
             }
             mCallback = (OnCreateFavoriteListener) activity;
 
 
-        } catch (ClassCastException e){
+        } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnCreateFavoriteListener");
         }
@@ -88,6 +91,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         LatLng sydney = new LatLng(-34, 151);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if (placeLatLng != null) {
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLatLng, 7f));
+            mMap.addMarker(
+                    new MarkerOptions()
+                            .position(placeLatLng)
+                            .title(getActivity()
+                                    .getIntent()
+                                    .getStringExtra(NoteActivity.PLACE_NAME)));
+        }
+
         if (ActivityCompat.checkSelfPermission(getActivity(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
@@ -99,18 +113,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
         mMap.setMyLocationEnabled(true);
 
-
-
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
 
-                mMap.addMarker(new MarkerOptions().position(latLng).title("Favorite1"));
+                mMap.addMarker(new MarkerOptions().position(latLng).title("new Place"));
 
                 mCallback.onCreateFavorite(
                         new NavDrawer.ActivityNavDrawerItem("new Place", latLng, null, NoteActivity.class));
-
-
             }
 
         });
@@ -120,7 +130,4 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public interface OnCreateFavoriteListener {
         public void onCreateFavorite(NavDrawer.ActivityNavDrawerItem item);
     }
-
-
-
 }

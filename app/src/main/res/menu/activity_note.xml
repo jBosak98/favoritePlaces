@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/activity_note_map_view"
+        android:title="see at map"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_view"/>
     <item
         android:id="@+id/activity_note_menuEdit"
-        android:icon="@drawable/ic_group_expand_15"
+        android:icon="@android:drawable/ic_menu_edit"
         android:title="Edit"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
+
 
 </menu>
